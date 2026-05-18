@@ -8,7 +8,12 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
 // Dashboard route
-Route::get('/', [DashboardController::class, 'index'])->name('home');
+
+Route::get('/', function () {
+    return auth()->check()
+        ? redirect()->route('dashboard')
+        : view('landing');
+})->name('home');
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 Route::post('/follow/{followed_id}', [DashboardController::class, 'followUser'])->middleware('auth');
 
