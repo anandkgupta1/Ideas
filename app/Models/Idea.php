@@ -1,7 +1,5 @@
 <?php
 
-// App\Models\Idea.php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,18 +9,17 @@ class Idea extends Model
 {
     use HasFactory;
 
-    // Fillable fields for mass assignment
-    protected $fillable = ['content', 'user_id'];  // Do not include 'likes' here
+    protected $fillable = ['content', 'user_id'];
 
-    // Define the relationship with the User model
+    // ✅ Likes relationship
+    public function likes()
+    {
+        return $this->hasMany(Like::class);
+    }
+
+    // User who posted the idea
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    // Define the relationship with the Like model
-    public function likes()
-    {
-        return $this->hasMany(\App\Models\Like::class);
     }
 }

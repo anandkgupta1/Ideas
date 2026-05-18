@@ -1,9 +1,7 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use App\Models\Idea;
-use App\Models\Like;  // Import the Like model
+use App\Models\Like;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,29 +10,24 @@ class IdeaController extends Controller
     // Store a new idea
     public function store(Request $request)
     {
-        // Validate the incoming request
         $validated = $request->validate([
             'content' => 'required|string|max:255',
         ]);
 
-        // Create the idea and save it to the database
         $idea = Idea::create([
             'content' => $validated['content'],
-            'user_id' => auth()->id(), // Assuming you're using user authentication
+            'user_id' => auth()->id(),
         ]);
 
-        // Return a JSON response
         return response()->json(['success' => true, 'idea' => $idea]);
     }
 
     // Get all ideas
     public function index()
     {
-        // Fetch ideas in descending order
         $ideas = Idea::latest()->get();
         return view('dashboard', compact('ideas'));
     }
-
 
     // Like or unlike an idea
     public function likeIdea($id)
@@ -53,13 +46,13 @@ class IdeaController extends Controller
 
         if ($existingLike) {
             $existingLike->delete();
-            $liked = false;
+            $liked = false; // ✅ FIX: track liked status
         } else {
             Like::create([
                 'user_id' => auth()->id(),
                 'idea_id' => $id,
             ]);
-            $liked = true;
+            $liked = true; // ✅ FIX: track liked status
         }
 
         $likesCount = Like::where('idea_id', $id)->count();
@@ -67,7 +60,7 @@ class IdeaController extends Controller
         return response()->json([
             'success' => true,
             'likes'   => $likesCount,
-            'liked'   => $liked        // ✅ yeh add kiya
+            'liked'   => $liked  // ✅ FIX: return liked status to frontend
         ]);
     }
 }
